@@ -17,7 +17,7 @@
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { HJEPA, round } = require(path.join(__dirname, "lib", "hjepa.js"));
+const { HJEPA, round } = require("./lib/hjepa.js");
 
 const DIR = ".world-model";
 const MODEL_FILE = `${DIR}/model.json`;
