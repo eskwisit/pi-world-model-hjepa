@@ -1,0 +1,7 @@
+dist/
+*.piplug
+.DS_Store
+node_modules/
+.world-model/
+__pycache__/
+*.pyc
