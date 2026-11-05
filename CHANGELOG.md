@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.1
+
+### Fixes
+
+- **main:** pass the store audit by loading the model library statically (`155abb9`)
+
 ## 0.10.0
 
 ### Features
