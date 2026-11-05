@@ -19,6 +19,16 @@ Then it changes what the agent does:
 - **When unsure:** if the predictors disagree, the agent is told to `probe` first. One way is the
   bundled cheap, read-only `world-model-scout` sub-agent.
 
+## Install
+
+1. Download `eskwisit.world-model-hjepa-<version>.piplug` from the
+   [releases](https://github.com/eskwisit/pi-world-model-hjepa/releases), then install it from the
+   PI-Desktop plugins page. To develop, load this folder as a development plugin instead.
+2. Grant the permissions it asks for (see [Data and permissions](#data-and-permissions)).
+3. Start a new session, so that the `world-model-scout` sub-agent and the skills are picked up.
+4. Optional: pick the H-JEPA model and where it runs in the plugin's settings
+   ([Settings](#settings)).
+
 ## The model
 
 Everything is pure JavaScript. There are no dependencies, no network access and no processes.
@@ -68,9 +78,12 @@ The plugin also ships a way to install the official H-JEPA release:
   DROID). They run in the release's own Python/PyTorch environment, not inside the plugin, and they
   don't replace the text model above.
 
-Ask the agent "install H-JEPA" and the **H-JEPA install** skill takes over:
+Asking the agent to "run H-JEPA" installs whatever the chosen model needs by itself (see
+[Picking the world model](#picking-the-world-model)). To install ahead of time, ask it to "install
+H-JEPA" and the **H-JEPA install** skill takes over:
 
-1. `wm_hjepa {action:"plan", env, models, seeds}` stages
+1. `wm_hjepa {action:"plan"}` (the model chosen in the settings), or
+   `{action:"plan", env, models, seeds}` for other checkpoints, stages
    [scripts/install-hjepa.sh](scripts/install-hjepa.sh) as `.world-model/hjepa/install-hjepa.sh`.
    It returns the download size and the dry-run, install and check commands.
 2. The agent runs them with Bash. The script does the following, following the release README:
@@ -81,8 +94,8 @@ Ask the agent "install H-JEPA" and the **H-JEPA install** skill takes over:
      `$HJEPA_HOME/ckpts`;
    - downloads the evaluation tasks (`cc05cb8`) and verifies their SHA-256 checksums;
    - loads one checkpoint as a smoke test.
-3. `wm_hjepa {action:"status"}` reports the result of the check and gives a ready `eval.py`
-   command.
+3. `wm_hjepa {action:"status"}` reports the result of the check, the model chosen in the
+   settings, the compute target and the last run.
 
 You can also run it by hand:
 
@@ -146,7 +159,8 @@ both targets.
 
   When the machine does have an NVIDIA GPU, `eval.py` runs unchanged.
   - **Measured on an Apple M2:** one `ant_l3` task (AntMaze, 3-level H-JEPA, seed 42) took
-    628–684 s over two runs and succeeded both times. All 50 tasks would take ~9 h, so run it in the background.
+    628–684 s over two runs and succeeded both times. All 50 tasks would take ~9 h, so run it
+    in the background.
   - Numbers are close to, not identical with, the paper's CUDA runs.
   - **Measured on an Apple M2:** DROID H-JEPA 2 levels (seed 1, planner seed 1) planned
     clip 0 in 343 s, with Fréchet fidelity 9.75% on that one clip. All 16 clips would take
@@ -155,8 +169,8 @@ both targets.
     installer puts `decord2` (or `eva-decord`) in its place; both import as `decord`.
 - **Remote NVIDIA GPU (`remote`).** Over key-authenticated SSH to **Remote GPU host**:
   - checks Linux and `nvidia-smi`;
-  - with `setup`, copies the pinned installer and installs the release under
-    **Remote HJEPA_HOME**;
+  - with `setup` (the default from `wm_hjepa`), copies the pinned installer and installs what the
+    run needs and is missing under **Remote HJEPA_HOME**;
   - runs `eval.py` unchanged with `MUJOCO_GL=egl`;
   - copies the results back with `scp`.
 

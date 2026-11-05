@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "eskwisit.world-model-hjepa",
 	"name": "World Model (H-JEPA)",
-	"version": "0.1.0",
+	"version": "0.10.0",
 	"description": "A hierarchical JEPA world model for agents and sub-agents: it learns in latent space what actions and intents do, imagines candidate plans and delegations before you commit, and flags surprising results so the agent replans. Also installs and runs the official H-JEPA world models from Hugging Face, on this computer's GPU or a remote NVIDIA GPU.",
 	"author": "eskwisit",
 	"license": "Apache-2.0",
@@ -25,7 +25,7 @@
 		}
 	},
 	"safetyNotes": "Agent tools, two skills, one sub-agent and three H-JEPA scripts. The plugin process itself makes no network access and runs no processes. agent.prompt.inject indexes the World Model and H-JEPA install skills for the Skill tool. agent.tool.register adds five tools (wm_observe, wm_plan, wm_train, wm_status, wm_hjepa). fs.read and fs.write are scoped to .world-model/** in the workspace: the recorded experience (the compact state/action/result text the agent chooses to log), the model weights, the staged H-JEPA scripts, their logs and results. Node fs is used only to read the plugin's own files and to copy its world-model-scout sub-agent to ~/.agents/subagents (removed on unload unless you edited it). The H-JEPA scripts run only when the agent runs them with Bash on your behalf. install-hjepa.sh clones github.com/kevinghst/H-JEPA at a pinned commit, creates a Python 3.11 environment, installs packages from PyPI, downloads pinned checkpoints and evaluation data from huggingface.co into $HJEPA_HOME (default ~/hjepa), verifies checksums, and loads one checkpoint with torch.load(weights_only=False), which executes pickled code from that pinned release. hjepa-run.sh evaluates the model chosen in the settings, installing what is missing first, either on this computer (through hjepa_local.py, which redirects CUDA calls to the Apple GPU or CPU in memory) or, when 'H-JEPA compute' is remote, on the SSH host you configure: key authentication only; it copies the installer there, installs and runs the release on that host, and copies the results back with scp.",
-	"changelog": "First release: a hierarchical JEPA world model that learns from agent and sub-agent steps to rank plans and flag surprises, plus the official H-JEPA world models (AntMaze, FourRoom, Cube, Push-T, DROID) installed and run from the settings on this computer's GPU or a remote NVIDIA GPU.",
+	"changelog": "First release: a world model that ranks agent and sub-agent plans and flags surprises, plus the official H-JEPA world models, run on your GPU or a remote NVIDIA GPU.",
 	"contributes": {
 		"skills": [
 			"skills/world-model.md",

@@ -1,21 +1,40 @@
 # Changelog
 
-## 0.1.0
+## 0.10.0
 
-- First release:
-  - A hierarchical JEPA world model (step level and intent level) that learns from agent and
-    sub-agent steps.
-  - Four tools: `wm_observe`, `wm_plan`, `wm_train` and `wm_status`.
-  - The World Model skill.
-  - The read-only `world-model-scout` sub-agent.
-  - The installer for the official H-JEPA release (`wm_hjepa` tool, the H-JEPA install skill and
-    `scripts/install-hjepa.sh`): pinned code, checkpoints and evaluation tasks from Hugging Face,
-    checksums, and a smoke test.
-  - H-JEPA evaluations on this computer's GPU (Apple GPU / CPU through an in-memory CUDA adapter) or
-    on a remote NVIDIA GPU over SSH, chosen by the new "H-JEPA compute" setting
-    (`wm_hjepa {action:"run"}`, `scripts/hjepa-run.sh`, `scripts/hjepa_local.py`).
-  - Settings to pick the H-JEPA world model (environment including DROID, model, training seed,
-    evaluation size). `wm_hjepa {action:"run"}` installs whatever that model needs and is missing
-    (locally or on the remote host), then evaluates it.
-  - DROID evaluation with Fréchet fidelity. On Apple Silicon it uses `decord2`/`eva-decord` in
-    place of `decord`, and the CUDA adapter now also covers tensors created with `device="cuda"`.
+### Features
+
+- **lib:** add a hierarchical jepa world model in plain javascript (`885d0fe`)
+- **subagents:** add a read-only scout that probes before planning (`1262d99`)
+- **scripts:** install the official h-jepa release at pinned versions (`506e0d9`)
+- **scripts:** run h-jepa evaluations on an apple gpu or the cpu (`877ba9e`)
+- **scripts:** run h-jepa evaluations locally or on a remote nvidia gpu (`652acbe`)
+- **main:** register the world model and h-jepa agent tools (`9985691`)
+- **skills:** plan, observe and train with the world model (`960609b`)
+- **skills:** install and run h-jepa world models from the settings (`864c051`)
+- **manifest:** declare tools, skills, settings and workspace file scope (`0506aa1`)
+
+### Documentation
+
+- **readme:** document the world model, h-jepa runs, settings and tests (`d214633`)
+
+### Tests
+
+- **tests:** add shared test helpers with a fake host (`4ef3e95`)
+- **tests:** add the node test entry point (`1d28fd0`)
+- **tests:** cover the h-jepa model math and learning (`82b631b`)
+- **tests:** cover the world model tools (`b44ac87`)
+- **tests:** cover plugin load, unload and the scout sub-agent (`c096ca6`)
+- **tests:** cover the h-jepa installer, plan and status (`c5b3641`)
+- **tests:** cover h-jepa runs locally and over ssh (`32e6e0f`)
+
+### CI
+
+- print the changelog section of a version (`426e190`)
+- publish a github release when the manifest version changes (`4d684df`)
+
+### Chores
+
+- ignore build output, workspace data and python caches (`888c532`)
+- add the apache 2.0 license (`3a4209a`)
+- add the changelog for 0.1.0 (`59ae0e7`)
