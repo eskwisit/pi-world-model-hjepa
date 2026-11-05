@@ -1,0 +1,505 @@
+{
+	"schemaVersion": 1,
+	"id": "eskwisit.world-model-hjepa",
+	"name": "World Model (H-JEPA)",
+	"version": "0.1.0",
+	"description": "A hierarchical JEPA world model for agents and sub-agents: it learns in latent space what actions and intents do, imagines candidate plans and delegations before you commit, and flags surprising results so the agent replans. Also installs and runs the official H-JEPA world models from Hugging Face, on this computer's GPU or a remote NVIDIA GPU.",
+	"author": "eskwisit",
+	"license": "Apache-2.0",
+	"homepage": "https://github.com/eskwisit/pi-world-model-hjepa",
+	"repository": "https://github.com/eskwisit/pi-world-model-hjepa",
+	"categories": [
+		"productivity"
+	],
+	"main": "main.js",
+	"i18n": {
+		"en": {
+			"name": "World Model (H-JEPA)",
+			"description": "A hierarchical JEPA world model for agents and sub-agents: it learns in latent space what actions and intents do, imagines candidate plans and delegations before you commit, and flags surprising results so the agent replans. Also installs and runs the official H-JEPA world models from Hugging Face, on this computer's GPU or a remote NVIDIA GPU.",
+			"safetyNotes": "Agent tools, two skills, one sub-agent and three H-JEPA scripts. The plugin process itself makes no network access and runs no processes. agent.prompt.inject indexes the World Model and H-JEPA install skills for the Skill tool. agent.tool.register adds five tools (wm_observe, wm_plan, wm_train, wm_status, wm_hjepa). fs.read and fs.write are scoped to .world-model/** in the workspace: the recorded experience (the compact state/action/result text the agent chooses to log), the model weights, the staged H-JEPA scripts, their logs and results. Node fs is used only to read the plugin's own files and to copy its world-model-scout sub-agent to ~/.agents/subagents (removed on unload unless you edited it). The H-JEPA scripts run only when the agent runs them with Bash on your behalf. install-hjepa.sh clones github.com/kevinghst/H-JEPA at a pinned commit, creates a Python 3.11 environment, installs packages from PyPI, downloads pinned checkpoints and evaluation data from huggingface.co into $HJEPA_HOME (default ~/hjepa), verifies checksums, and loads one checkpoint with torch.load(weights_only=False), which executes pickled code from that pinned release. hjepa-run.sh evaluates the model chosen in the settings, installing what is missing first, either on this computer (through hjepa_local.py, which redirects CUDA calls to the Apple GPU or CPU in memory) or, when 'H-JEPA compute' is remote, on the SSH host you configure: key authentication only; it copies the installer there, installs and runs the release on that host, and copies the results back with scp."
+		},
+		"zh-CN": {
+			"name": "世界模型（H-JEPA）",
+			"description": "面向智能体与子智能体的分层 JEPA 世界模型：在潜在空间中学习动作与意图的效果，在你做出决定前预演候选计划与子智能体分派，并在结果出乎意料时提示智能体重新规划。还可安装并运行 Hugging Face 上官方的 H-JEPA 世界模型，可在本机 GPU 或远程 NVIDIA GPU 上运行。",
+			"safetyNotes": "智能体工具、两个技能、一个子智能体和三个 H-JEPA 脚本。插件进程本身不访问网络，也不运行进程。agent.prompt.inject 用于为 Skill 工具索引“世界模型”与“H-JEPA 安装”技能。agent.tool.register 注册五个工具（wm_observe、wm_plan、wm_train、wm_status、wm_hjepa）。fs.read 与 fs.write 仅限工作区中的 .world-model/**：智能体选择记录的简短状态/动作/结果文本、模型权重、暂存的 H-JEPA 脚本及其日志与结果。Node fs 仅用于读取插件自身文件，以及将 world-model-scout 子智能体复制到 ~/.agents/subagents（卸载时删除，除非你修改过它）。H-JEPA 脚本只在智能体代你用 Bash 运行时执行。install-hjepa.sh 以固定提交克隆 github.com/kevinghst/H-JEPA，创建 Python 3.11 环境，从 PyPI 安装依赖包，从 huggingface.co 将固定版本的检查点与评估数据下载到 $HJEPA_HOME（默认 ~/hjepa），校验哈希，并用 torch.load(weights_only=False) 加载一个检查点——这会执行该固定版本中的 pickle 代码。hjepa-run.sh 评估设置中选择的模型，并先安装缺少的部分；可在本机运行（通过 hjepa_local.py 在内存中把 CUDA 调用重定向到 Apple GPU 或 CPU），或在“H-JEPA 计算位置”设为远程时，在你配置的 SSH 主机上运行：仅使用密钥认证，把安装脚本复制过去，在该主机上安装并运行，再用 scp 取回结果。"
+		}
+	},
+	"safetyNotes": "Agent tools, two skills, one sub-agent and three H-JEPA scripts. The plugin process itself makes no network access and runs no processes. agent.prompt.inject indexes the World Model and H-JEPA install skills for the Skill tool. agent.tool.register adds five tools (wm_observe, wm_plan, wm_train, wm_status, wm_hjepa). fs.read and fs.write are scoped to .world-model/** in the workspace: the recorded experience (the compact state/action/result text the agent chooses to log), the model weights, the staged H-JEPA scripts, their logs and results. Node fs is used only to read the plugin's own files and to copy its world-model-scout sub-agent to ~/.agents/subagents (removed on unload unless you edited it). The H-JEPA scripts run only when the agent runs them with Bash on your behalf. install-hjepa.sh clones github.com/kevinghst/H-JEPA at a pinned commit, creates a Python 3.11 environment, installs packages from PyPI, downloads pinned checkpoints and evaluation data from huggingface.co into $HJEPA_HOME (default ~/hjepa), verifies checksums, and loads one checkpoint with torch.load(weights_only=False), which executes pickled code from that pinned release. hjepa-run.sh evaluates the model chosen in the settings, installing what is missing first, either on this computer (through hjepa_local.py, which redirects CUDA calls to the Apple GPU or CPU in memory) or, when 'H-JEPA compute' is remote, on the SSH host you configure: key authentication only; it copies the installer there, installs and runs the release on that host, and copies the results back with scp.",
+	"changelog": "First release: a hierarchical JEPA world model that learns from agent and sub-agent steps to rank plans and flag surprises, plus the official H-JEPA world models (AntMaze, FourRoom, Cube, Push-T, DROID) installed and run from the settings on this computer's GPU or a remote NVIDIA GPU.",
+	"contributes": {
+		"skills": [
+			"skills/world-model.md",
+			"skills/hjepa-install.md"
+		],
+		"agentTools": [
+			{
+				"name": "wm_observe",
+				"description": "World model: record one step of an agent or sub-agent (state before, action, result after, ok) or end an episode (outcome). Learns online and returns surprise and advice (continue / replan). Use from the world-model skill.",
+				"risk": "low",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"episode": {
+							"type": "string",
+							"description": "Episode id: one per task, e.g. fix-login-bug-1"
+						},
+						"goal": {
+							"type": "string",
+							"description": "The episode goal, once, short"
+						},
+						"state": {
+							"type": "string",
+							"description": "Compact state before the step (≤600 chars): what is known, what is failing"
+						},
+						"action": {
+							"type": "string",
+							"description": "What was done, e.g. 'run tests', 'delegate fix to fixer'"
+						},
+						"result": {
+							"type": "string",
+							"description": "Compact state after the step (≤600 chars)"
+						},
+						"agent": {
+							"type": "string",
+							"description": "Who acted: 'main' or the sub-agent name, e.g. explorer"
+						},
+						"intent": {
+							"type": "string",
+							"description": "The subgoal this step serves; consecutive steps with one intent form a level-2 chunk"
+						},
+						"ok": {
+							"type": "boolean",
+							"description": "Did the step achieve what it was for"
+						},
+						"outcome": {
+							"type": "string",
+							"enum": [
+								"success",
+								"failure"
+							],
+							"description": "End the episode with this outcome"
+						}
+					},
+					"required": [
+						"episode"
+					]
+				}
+			},
+			{
+				"name": "wm_plan",
+				"description": "World model: imagine 1-12 candidate actions, plans or sub-agent delegations from the current state and rank them by predicted failure, distance to the goal and uncertainty (H-JEPA, step and intent level). Use from the world-model skill.",
+				"risk": "low",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"state": {
+							"type": "string",
+							"description": "Compact current state (≤600 chars)"
+						},
+						"goal": {
+							"type": "string",
+							"description": "Desired end state, phrased like a state"
+						},
+						"options": {
+							"type": "array",
+							"description": "1-12 options: { label, agent?, intent?, steps? }",
+							"items": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string",
+										"description": "Short name of the option, e.g. 'delegate the fix to fixer'"
+									},
+									"agent": {
+										"type": "string",
+										"description": "Who would act: 'main' or a sub-agent name"
+									},
+									"intent": {
+										"type": "string",
+										"description": "The subgoal it serves (level 2)"
+									},
+									"steps": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"description": "Concrete steps to roll out (level 1), ≤12"
+									}
+								},
+								"required": [
+									"label"
+								]
+							}
+						},
+						"riskAversion": {
+							"type": "number",
+							"description": "Weight on uncertainty; default from settings"
+						}
+					},
+					"required": [
+						"state",
+						"options"
+					]
+				}
+			},
+			{
+				"name": "wm_train",
+				"description": "World model: train the H-JEPA on all recorded experience for a few epochs (bounded to ~80 s). Use from the world-model skill.",
+				"risk": "low",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"epochs": {
+							"type": "integer",
+							"description": "1-50, default 5"
+						}
+					}
+				}
+			},
+			{
+				"name": "wm_status",
+				"description": "World model: experience and episode counts, per-agent reliability, model state; reset 'model' or 'all'. Use from the world-model skill.",
+				"risk": "low",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"reset": {
+							"type": "string",
+							"enum": [
+								"model",
+								"all"
+							],
+							"description": "Reset the weights, or the weights and the experience"
+						}
+					}
+				}
+			},
+			{
+				"name": "wm_hjepa",
+				"description": "World model: install and run the official H-JEPA release (huggingface.co/jepa-world-models/h-jepa). plan stages the pinned installer; run returns an evaluation command for this computer's GPU or a remote NVIDIA GPU (setting); status. Use from the hjepa-install skill.",
+				"risk": "low",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"action": {
+							"type": "string",
+							"enum": [
+								"plan",
+								"run",
+								"status"
+							],
+							"description": "plan (default): stage the installer; run: stage and return an evaluation command for the configured compute target; status"
+						},
+						"compute": {
+							"type": "string",
+							"enum": [
+								"local",
+								"remote"
+							],
+							"description": "run: override the 'H-JEPA compute' setting"
+						},
+						"model": {
+							"type": "string",
+							"description": "run: one model, e.g. hjepa_l3 (default: the 'H-JEPA model' setting)"
+						},
+						"seed": {
+							"type": "string",
+							"description": "run: one training seed, e.g. 42 or 1000 (default: the 'H-JEPA training seed' setting)"
+						},
+						"planSeed": {
+							"type": "integer",
+							"description": "run, droid: planner seed (the paper uses 1, 2, 3); default 1"
+						},
+						"tasks": {
+							"type": "integer",
+							"description": "run: the first N tasks (of 50) or DROID clips (of 16); default: the 'Evaluation size' setting (0 = all)"
+						},
+						"out": {
+							"type": "string",
+							"description": "run: output.dir name; rerunning the same one resumes"
+						},
+						"device": {
+							"type": "string",
+							"enum": [
+								"auto",
+								"mps",
+								"cpu"
+							],
+							"description": "run, local: override the 'Local device' setting"
+						},
+						"host": {
+							"type": "string",
+							"description": "run, remote: override the 'Remote GPU host' setting"
+						},
+						"remoteHome": {
+							"type": "string",
+							"description": "run, remote: override the 'Remote HJEPA_HOME' setting"
+						},
+						"setup": {
+							"type": "boolean",
+							"description": "run: install whatever the run needs and is missing first, locally or on the host (default true)"
+						},
+						"overrides": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "run: extra hydra overrides, e.g. eval.chunk_size=5"
+						},
+						"env": {
+							"type": "string",
+							"description": "ant, fourroom, cube, pusht, droid (plan: comma-separated, sim or all; run: one). Default: the 'H-JEPA environment' setting"
+						},
+						"models": {
+							"type": "string",
+							"description": "lewm, hjepa_l2..l4, hwm_l2..l4 (droid: lewm, hjepa_l2, hwm_l2), comma-separated, or all; default hjepa_l3 (droid hjepa_l2)"
+						},
+						"seeds": {
+							"type": "string",
+							"description": "42, 43, 44 (droid: 1, 1000, 10000), comma-separated, or all; default 42 (droid 1)"
+						},
+						"home": {
+							"type": "string",
+							"description": "HJEPA_HOME data root; default $HJEPA_HOME or ~/hjepa"
+						},
+						"codeDir": {
+							"type": "string",
+							"description": "Where to clone the code; default <home>/H-JEPA"
+						},
+						"python": {
+							"type": "string",
+							"enum": [
+								"auto",
+								"conda",
+								"uv",
+								"venv"
+							],
+							"description": "Environment manager; default auto"
+						},
+						"skipCode": {
+							"type": "boolean",
+							"description": "Only download checkpoints (code and environment already set up)"
+						},
+						"skipTasks": {
+							"type": "boolean",
+							"description": "Do not download the evaluation tasks"
+						}
+					}
+				}
+			}
+		],
+		"settings": [
+			{
+				"key": "onlineSteps",
+				"title": "Online training batches",
+				"description": "Minibatches trained after every wm_observe (0 turns online learning off).",
+				"type": "number",
+				"default": 2
+			},
+			{
+				"key": "riskAversion",
+				"title": "Risk aversion",
+				"description": "Weight on ensemble disagreement when ranking options in wm_plan.",
+				"type": "number",
+				"default": 0.3
+			},
+			{
+				"key": "goalWeight",
+				"title": "Goal weight",
+				"description": "Weight on latent distance to the goal when ranking options.",
+				"type": "number",
+				"default": 0.5
+			},
+			{
+				"key": "surpriseThreshold",
+				"title": "Surprise threshold",
+				"description": "Relative prediction error above which wm_observe advises replanning.",
+				"type": "number",
+				"default": 2.5
+			},
+			{
+				"key": "maxTransitions",
+				"title": "Experience cap",
+				"description": "Most recent steps kept in .world-model/experience.json.",
+				"type": "number",
+				"default": 4000
+			},
+			{
+				"key": "hjepaEnv",
+				"title": "H-JEPA environment",
+				"description": "Which official H-JEPA world model to install and run: the task it was trained on. The four simulated ones report success rate on 50 tasks; DROID (real robot-arm videos, offline) reports Frechet fidelity on 16 clips.",
+				"type": "select",
+				"enum": [
+					{
+						"label": "Visual AntMaze: a four-legged robot navigating a maze",
+						"value": "ant"
+					},
+					{
+						"label": "FourRoom Distractors: navigation with a distracting agent",
+						"value": "fourroom"
+					},
+					{
+						"label": "OGBench Cube: a robot arm picking up a cube",
+						"value": "cube"
+					},
+					{
+						"label": "Push-T: pushing a T-shaped block into place",
+						"value": "pusht"
+					},
+					{
+						"label": "DROID: a real robot arm, from recorded videos",
+						"value": "droid"
+					}
+				],
+				"default": "ant"
+			},
+			{
+				"key": "hjepaModel",
+				"title": "H-JEPA model",
+				"description": "Recommended = H-JEPA with 3 levels (DROID: 2 levels). DROID has only LeWM, H-JEPA 2 levels and HWM 2 levels.",
+				"type": "select",
+				"enum": [
+					{
+						"label": "Recommended for the environment",
+						"value": "auto"
+					},
+					{
+						"label": "H-JEPA, 2 levels",
+						"value": "hjepa_l2"
+					},
+					{
+						"label": "H-JEPA, 3 levels",
+						"value": "hjepa_l3"
+					},
+					{
+						"label": "H-JEPA, 4 levels",
+						"value": "hjepa_l4"
+					},
+					{
+						"label": "HWM baseline, 2 levels",
+						"value": "hwm_l2"
+					},
+					{
+						"label": "HWM baseline, 3 levels",
+						"value": "hwm_l3"
+					},
+					{
+						"label": "HWM baseline, 4 levels",
+						"value": "hwm_l4"
+					},
+					{
+						"label": "LeWM, flat (1 level)",
+						"value": "lewm"
+					}
+				],
+				"default": "auto"
+			},
+			{
+				"key": "hjepaSeed",
+				"title": "H-JEPA training seed",
+				"description": "Each model was trained 3 times. Simulated: seeds 42, 43, 44. DROID: seeds 1, 1000, 10000.",
+				"type": "select",
+				"enum": [
+					{
+						"label": "1st (42; DROID 1)",
+						"value": "first"
+					},
+					{
+						"label": "2nd (43; DROID 1000)",
+						"value": "second"
+					},
+					{
+						"label": "3rd (44; DROID 10000)",
+						"value": "third"
+					}
+				],
+				"default": "first"
+			},
+			{
+				"key": "hjepaTasks",
+				"title": "Evaluation size",
+				"description": "How many tasks (simulated, up to 50) or clips (DROID, up to 16) a run evaluates. 0 = all, as in the paper. On an Apple M2 GPU one AntMaze task takes ~11 min.",
+				"type": "number",
+				"default": 0
+			},
+			{
+				"key": "hjepaCompute",
+				"title": "H-JEPA compute",
+				"description": "Where wm_hjepa runs H-JEPA evaluations: this computer's GPU (Apple GPU / CPU through an adapter, or NVIDIA directly), or a remote NVIDIA GPU machine over SSH.",
+				"type": "select",
+				"enum": [
+					{
+						"label": "This computer's GPU (Apple GPU / CPU)",
+						"value": "local"
+					},
+					{
+						"label": "Remote NVIDIA GPU (SSH)",
+						"value": "remote"
+					}
+				],
+				"default": "local"
+			},
+			{
+				"key": "hjepaLocalDevice",
+				"title": "Local device",
+				"description": "For 'This computer's GPU' without NVIDIA: auto uses the Apple GPU (mps) when available, else the CPU.",
+				"type": "select",
+				"enum": [
+					{
+						"label": "Auto",
+						"value": "auto"
+					},
+					{
+						"label": "Apple GPU (mps)",
+						"value": "mps"
+					},
+					{
+						"label": "CPU",
+						"value": "cpu"
+					}
+				],
+				"default": "auto"
+			},
+			{
+				"key": "hjepaRemoteHost",
+				"title": "Remote GPU host",
+				"description": "SSH destination of the NVIDIA machine, e.g. user@gpu-box or an ~/.ssh/config alias. Key authentication only: no password prompts.",
+				"type": "string",
+				"default": ""
+			},
+			{
+				"key": "hjepaRemoteHome",
+				"title": "Remote HJEPA_HOME",
+				"description": "Folder on the remote host for the code, Python environment and checkpoints, relative to the remote home directory.",
+				"type": "string",
+				"default": "hjepa"
+			}
+		]
+	},
+	"permissions": [
+		"agent.prompt.inject",
+		"agent.tool.register",
+		"fs.read",
+		"fs.write"
+	],
+	"fs": {
+		"read": {
+			"root": "workspace",
+			"scope": [
+				".world-model/**"
+			]
+		},
+		"write": {
+			"root": "workspace",
+			"scope": [
+				".world-model/**"
+			]
+		}
+	},
+	"engines": {
+		"piDesktop": ">=0.9.0"
+	},
+	"activationEvents": [
+		"onStartup"
+	]
+}
